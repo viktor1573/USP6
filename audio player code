@@ -1,0 +1,111 @@
+#забравих как да работя с github 💀 копирай кода, инсталирай flet за проекта, изтегли някой mp3 файл и замени пътя до него с url.
+
+import flet as ft
+
+url = "C:/Users/User/Downloads/ODESZA - Behind The Sun - Official Video.mp3"    #замени с твой файл че не става с линк
+def main(page: ft.Page):
+    page.window_width=400
+    page.window_height=600
+
+
+    def slider_changed(e):
+        duration_slider.value= int(e.data) / audio1.get_duration() * 100
+        duration_slider.update()
+        progress_button.text=f"{round(audio1.get_current_position()/60000)}:{int(audio1.get_current_position()/1000)%60:02}/{round(audio1.get_duration()/1000/60)}:{int(audio1.get_duration()/1000)%60:02}"
+        progress_button.update()
+    def set_time(e):
+        value=e.control.value/100*audio1.get_duration()
+
+    def volume_change(e):
+        value=e.control.value/100
+        if value > 0:
+            volume.label = "🔊"
+            sound.text="🔊"
+        if value==0:
+            volume.label = "🔇"
+            sound.text="🔇"
+        sound.update()
+        volume.update()
+        audio1.volume = value
+        audio1.update()
+
+    def mute(e):
+        volume.value=0
+        volume.label="🔇"
+        volume.update()
+        audio1.volume=0
+        audio1.update()
+        sound.text="🔇"
+        sound.update()
+
+
+    def play(_):
+        audio1.play()
+
+
+    def pause(_):
+        if pr_button.text=="❚❚":
+            audio1.pause()
+            pr_button.text="▶️"
+            pr_button.update()
+        else:
+            audio1.resume()
+            pr_button.text="❚❚"
+            pr_button.update()
+
+    def back(_):
+        pos_change=5000
+
+    audio1 = ft.Audio(
+        src=url,
+        autoplay=False,
+        volume=1,
+        balance=0,
+        on_position_changed=slider_changed
+    )
+    page.overlay.append(audio1)
+    play=ft.FilledTonalButton("Play", on_click=play)
+    pr_button = ft.FilledTonalButton("❚❚", on_click=pause)
+    duration_slider=ft.Slider(min=0, max=100, value=0, divisions=100, on_change=set_time, width=375)
+    progress_button=ft.CupertinoButton(text="0/0")
+    volume=ft.Slider(min=0, max=100, value=50, divisions=10, on_change=volume_change, width=105, opacity=0.5, label="🔊")
+    sound=ft.CupertinoButton(text="🔊", on_click=mute)
+    back_rewind=ft.FilledTonalButton(text="<",on_click=back)
+    forw_rewind=ft.FilledTonalButton(text=">",on_click=back)
+    page.add(
+
+        ft.Image(
+            src=f"https://static2.radiobonton.pl/data/articles/xga-1x1-luis-fonsi-stefflon-don-calypso-1653406576.webp",
+            width=350,
+            height=350,
+            fit=ft.ImageFit.FILL,
+            border_radius=ft.border_radius.all(100)
+        ),
+        ft.Row(
+            controls=[
+                play,
+                ft.CupertinoButton(text=" "),
+                progress_button,
+                ft.CupertinoButton(text=" "),
+                pr_button,
+
+
+            ]
+        ),
+        ft.Row(
+            controls=[
+                duration_slider,
+            ]
+        ),
+        ft.Row(
+            controls=[
+                back_rewind,
+                sound,
+                volume,
+                ft.CupertinoButton(text=" "),
+                forw_rewind,
+            ]
+        )
+    )
+    page.update()
+ft.app(target=main)
