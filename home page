@@ -1,0 +1,173 @@
+
+import flet as ft
+from flet import *
+import os
+
+def main(page: ft.Page):
+    page.window_width=400
+    page.window_height=800
+    genres_card=Row(scroll="auto")
+    tasks=Column(height=400,scroll='auto')
+    genres=["HipHop", "Classic", "Rock", "Country"]
+    col_gen=["purple","blue","red","yellow"]
+    playlist=["Despacito", "Shape of you", "Uptown Funk", "Gangnam Style", "Dame Tu Cosita", "Sugar", "Roar", "Waka Waka"]
+
+    def expand(e, index):
+        if genres_card.controls[index].height<450:
+            genres_card.controls[index].height=450
+            genres_card.controls[index].width=250
+            genres_card.controls[index].content.controls[0].controls[2].width=225
+            genres_card.update()
+        else:
+            genres_card.controls[index].height=110
+            genres_card.controls[index].width=170
+            genres_card.controls[index].content.controls[0].controls[2].width=140
+            genres_card.update()
+
+    for i in range(len(playlist)):
+        tasks.controls.append(
+            Container(
+                height=50,
+                width=400,
+                gradient=LinearGradient(
+                    begin=alignment.bottom_left,
+                    end=alignment.top_right,
+                    colors=["grey", "orange","brown900"]
+                ),                border_radius=25, padding=padding.only(
+                    left=20,
+                ),
+                content=Row(
+                    controls=[
+                        FilledTonalButton(
+                            text="🧑",
+                            on_click=lambda e:open_author(e)
+                        ),
+                        Column(
+                            controls=[
+                                ft.Text(
+                                    playlist[i],
+                                    italic=True,
+                                    color="brown900",
+
+                                ),
+                                Container(
+                                    width=150,
+                                    height=5,
+                                    bgcolor='white12',
+                                    border_radius=20,
+                                    content=Container(
+                                        bgcolor="white10",
+                                    ),
+
+                                ),
+                            ]
+                        ),
+                        FilledTonalButton(text="▶")
+
+                    ]
+
+                )),
+
+        )
+
+    cards=[]
+    for i, category in enumerate(genres):
+        c=Container(
+            border_radius=20,
+            gradient=LinearGradient(
+            begin=alignment.bottom_left,
+            end=alignment.top_right,
+            colors=["brown900", col_gen[i], "white"]
+            ),
+
+            width=170,
+            height=110,
+            padding=15,
+            scale=ft.transform.Scale(scale=1),
+            animate=ft.animation.Animation(1000, ft.AnimationCurve.EASE),
+            on_click=lambda e, index=i: expand(e, index),
+            content=Row(
+                controls=[
+                    Column(
+                        controls=[
+                            Text('Genre'),
+                            Text(category),
+                            Container(
+                                width=140,
+                                height=5,
+                                bgcolor='white12',
+                                border_radius=20,
+                                padding=padding.only(right=i * 30),
+                                animate=ft.animation.Animation(1000, ft.AnimationCurve.EASE),
+                                content=Container(
+                                    bgcolor="white10",
+                                ),
+
+                            ),
+                        ]
+                    )
+                ]
+
+            ),
+
+        )
+        cards.append(c)
+        genres_card.controls.append(cards[i])
+
+    _c = Container(
+        width=400,
+        height=700,
+        gradient=LinearGradient(
+            begin=alignment.bottom_left,
+            end=alignment.top_right,
+            colors=[ft.colors.BLACK12,ft.colors.GREY_900,ft.colors.DEEP_ORANGE_700]
+        ),
+        border_radius=35,
+        bgcolor='black',
+        padding=10,
+        content=Column(
+            controls=[
+                Row(alignment='spaceBetween',
+                    controls=[
+                    ]),
+                Container(height=20),
+
+                Container(
+                    gradient=LinearGradient(
+                        begin=alignment.bottom_left,
+                        end=alignment.top_right,
+                        colors=["grey", "orange"]
+                    ),
+
+                    border_radius=35,
+                    content=Text("genres:▽",color="black")
+                ),
+                Container(padding=padding.only(top=10,bottom=20),
+                          content=genres_card),
+                Container(
+                    gradient=LinearGradient(
+                        begin=alignment.bottom_left,
+                        end=alignment.top_right,
+                        colors=["grey", "orange"]
+                    ),
+
+                    border_radius=35,
+                    content=Text("favourites:▽",color="black")
+                ),
+                Stack(
+                    controls=[
+                        tasks,
+                    ]
+                )
+            ]
+        ))
+
+    page.add(
+        _c,
+    )
+    page.update()
+
+    def open_author(e):
+        pass
+
+ft.app(target=main)
