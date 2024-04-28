@@ -1,0 +1,268 @@
+import time
+import flet as ft
+from flet import *
+
+def main(page: ft.Page):
+    audio_src = "C:/Users/User/Downloads/ODESZA - Behind The Sun - Official Video.mp3"
+    page.window_width = 400
+    page.window_height = 800
+
+    #data base simulation
+    genres = ["HipHop", "Classic", "Rock", "Country", "Techno"]
+    col_gen = ["purple", "blue", "red", "yellow", "black"]
+    playlist = ["Despacito", "Shape of you", "Uptown Funk", "Gangnam Style", "Dame Tu Cosita", "Sugar", "Roar", "Waka Waka", "Baby Shark", "Ice Ice Baby"]
+    srcs = ["Luis Fonsi - Despacito ft. Daddy Yankee.mp3", "Ed Sheeran - Shape of You (Official Music Video).mp3", "Mark Ronson - Uptown Funk (Official Video) ft. Bruno Mars.mp3",
+            "PSY - GANGNAM STYLE(강남스타일) MV.mp3", "El Chombo - Dame Tu Cosita feat. Cutty Ranks (Official Video) [Ultra Records].mp3"]
+
+    audio1 = Audio(
+        src=audio_src,
+        autoplay=False,
+        volume=1,
+        balance=0,
+    )
+    page.overlay.append(audio1)
+
+    #on_click methods
+    def play_song(e, index, song):
+        nonlocal audio1, play_immed
+        if audio1.src != "C:/Users/User/Downloads/" + srcs[index]:
+            audio1.src = "C:/Users/User/Downloads/" + srcs[index]
+            audio1.update()
+            time.sleep(0.1)
+            audio1.play()
+            for i in range(len(play_immed)):
+                play_immed[i].text = "▶️"
+                play_immed[i].update()
+            play_immed[index].text = "❚❚"
+            play_immed[index].update()
+        elif play_immed[index].text == "❚❚":
+            audio1.pause()
+            play_immed[index].text = "▶️"
+            play_immed[index].update()
+        else:
+            audio1.resume()
+            play_immed[index].text = "❚❚"
+            play_immed[index].update()
+
+    def expand(e, index):
+        nonlocal genres_card
+        if genres_card.controls[index].height < 450:
+            genres_card.controls[index].height = 450
+            genres_card.controls[index].width = 250
+            genres_card.controls[index].content.controls[0].controls[2].width = 225
+            genres_card.controls[index].content.controls[0].controls[0].spacing = 125
+
+            leng = min(5, len(playlist))
+            for i in range(leng):
+                song_result = playlist[i][:15] + "..."
+                genres_card.controls[index].content.controls[0].controls.append(
+                    Container(
+                        height=50,
+                        width=220,
+                        border_radius=10,
+                        on_click=lambda e,index=i,song=playlist[i]:play_song(e,index,song),
+                        gradient=LinearGradient(
+                            begin=alignment.bottom_center,
+                            end=alignment.top_center,
+                            colors=[col_gen[index], "white"]
+                        ),
+                        animate_opacity=300,
+
+                        padding=padding.only(
+                            left=20,
+                        ),
+                        content=Row(
+                            controls=[
+                                Stack(
+                                    controls=[
+                                        Image(
+                                            src="https://marketplace.canva.com/EAFz3ee923I/1/0/1600w/canva-orange-yellow-black-artistic-fiery-sky-and-young-man-silhouette-album-cover-hrnla8UeuYU.jpg",
+                                            width=50,
+                                            height=50,
+                                            border_radius=25
+
+                                        ),
+                                        FilledTonalButton(
+                                            text=" ",
+                                            on_click=lambda e: open_author(e),
+                                            opacity=0
+                                        )
+                                    ]
+                                ),
+                                Column(
+                                    controls=[
+                                        ft.Text(
+                                            song_result,
+                                            color="white",
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        )),
+                )
+            genres_card.update()
+        else:
+            genres_card.controls[index].height = 110
+            genres_card.controls[index].width = 170
+            genres_card.controls[index].content.controls[0].controls[2].width = 140
+            del genres_card.controls[index].content.controls[0].controls[4:4 + len(playlist)]
+            genres_card.controls[index].content.controls[0].controls[0].spacing = 50
+            genres_card.update()
+
+    #buttons for direct play
+    play_immed = []
+
+    #popular
+    tasks = Column(height=500, scroll='auto')
+    hot_songs = []
+    for i in range(len(playlist)):
+        play = FilledTonalButton(text="▶", on_click=lambda e, index=i, song=playlist[i]: play_song(e, index, song))
+        play_immed.append(play)
+        task = Container(
+            height=50,
+            width=400,
+            gradient=LinearGradient(
+                begin=alignment.bottom_left,
+                end=alignment.top_right,
+                colors=["grey", "orange", "brown900"]
+            ),
+            border_radius=25,
+            padding=padding.only(
+                left=20,
+            ),
+            content=Row(
+                controls=[
+                    FilledTonalButton(
+                        text="🧑",
+                        on_click=lambda e: open_author(e)
+                    ),
+                    Column(
+                        controls=[
+                            ft.Text(
+                                playlist[i],
+                                italic=True,
+                                color="white",
+                            ),
+                            Container(
+                                width=150,
+                                height=5,
+                                bgcolor='white12',
+                                border_radius=20,
+                                content=Container(
+                                    bgcolor="white10",
+                                ),
+                            ),
+                        ]
+                    ),
+                    play_immed[i]
+                ]
+            ))
+        hot_songs.append(task)
+        tasks.controls.append(hot_songs[i])
+
+    #genres
+    genres_card = Row(scroll="auto")
+    cards = []
+    for i, category in enumerate(genres):
+        c = Container(
+            border_radius=20,
+            gradient=LinearGradient(
+                begin=alignment.bottom_left,
+                end=alignment.top_right,
+                colors=["white", col_gen[i], "brown900"]
+            ),
+            width=170,
+            height=110,
+            padding=15,
+            scale=ft.transform.Scale(scale=1),
+            animate=ft.animation.Animation(1000, ft.AnimationCurve.EASE),
+            on_click=lambda e, index=i: expand(e, index),
+            content=Row(
+                controls=[
+                    Column(
+                        controls=[
+                            Row(
+                                spacing=50,
+                                controls=[
+                                    Text('Genre'), Text('search...')
+                                ]
+                            ),
+                            Text(category),
+                            Container(
+                                width=140,
+                                height=5,
+                                bgcolor='white12',
+                                border_radius=20,
+                                animate=ft.animation.Animation(1000, ft.AnimationCurve.EASE),
+                                content=Container(
+                                    bgcolor="white10",
+                                ),
+                            ),
+                            Container(
+                                height=20
+                            )
+                        ]
+                    )
+                ]
+            ),
+        )
+        cards.append(c)
+        genres_card.controls.append(cards[i])
+
+    #main screen
+    _c = Container(
+        width=400,
+        height=750,
+        gradient=LinearGradient(
+            begin=alignment.bottom_left,
+            end=alignment.top_right,
+            colors=[ft.colors.BLACK12, ft.colors.GREY_900, ft.colors.DEEP_ORANGE_700]
+        ),
+        border_radius=35,
+        bgcolor='black',
+        padding=10,
+        content=Column(
+            controls=[
+                Row(alignment='spaceBetween',
+                    controls=[
+                    ]),
+                Container(height=20),
+                Container(
+                    gradient=LinearGradient(
+                        begin=alignment.bottom_left,
+                        end=alignment.top_right,
+                        colors=["black", ft.colors.DEEP_ORANGE_700]
+                    ),
+                    border_radius=35,
+                    content=Text("genres:▽", color="white")
+                ),
+                Container(padding=padding.only(top=10, bottom=20),
+                          content=genres_card),
+
+                Container(
+                    gradient=LinearGradient(
+                        begin=alignment.bottom_left,
+                        end=alignment.top_right,
+                        colors=["black", ft.colors.DEEP_ORANGE_700]
+                    ),
+                    border_radius=35,
+                    content=Text("last watched:▽", color="white")
+                ),
+                Stack(
+                    controls=[
+                        tasks,
+                    ]
+                )
+            ]
+        ))
+
+    page.add(
+        _c,
+    )
+
+    page.update()
+
+    def open_author(e):
+        pass
+
+ft.app(target=main)
