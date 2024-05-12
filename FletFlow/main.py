@@ -4,7 +4,7 @@ from flet import *
 import os
 
 def main(page: ft.Page):
-    audio_src = "C:/Users/User/Downloads/ODESZA - Behind The Sun - Official Video.mp3"
+    audio_src = "songs/Luis Fonsi - Despacito ft. Daddy Yankee.mp3"
     a_filter=g_filter="none"
     page.window_width = 400
     page.window_height = 800
@@ -55,11 +55,7 @@ def main(page: ft.Page):
             top_bar.controls[1].controls[index].height = 100
             for item in items:
                 top_bar.controls[1].controls[index].content.controls[1].controls.append(
-                    (Container(gradient=LinearGradient(
-                        begin=alignment.bottom_left,
-                        end=alignment.top_right,
-                        colors=["grey700", "black"]
-                    ),border_radius=25, on_click=lambda _, ite=item:set_filter(ite, index),content=Row(controls=[Text(item)]))))
+                    (Container(bgcolor="white",border_radius=25, on_click=lambda _, ite=item:set_filter(ite, index),content=Row(controls=[Text(item, color="#2b159e")]))))
         top_bar.controls[1].controls[index].update()
     def set_filter(item, index):
         nonlocal a_filter,g_filter
@@ -67,14 +63,16 @@ def main(page: ft.Page):
             a_filter=item
             top_bar.controls[1].controls[index].width = 60
             top_bar.controls[1].controls[index].height = 25
-            top_bar.controls[1].controls[3]=(FilledTonalButton(text=item,on_click=lambda _: remove_filter(a_filter,3)))
+            top_bar.controls[1].controls[3]=(ElevatedButton(text=str("x |"+item),bgcolor="grey100",color="#2b159e",on_click=lambda _: remove_filter(a_filter,3)))
             top_bar.controls[1].update()
         if index==2:
             g_filter=item
             top_bar.controls[1].controls[index].width = 60
             top_bar.controls[1].controls[index].height = 25
-            top_bar.controls[1].controls[4]=(FilledTonalButton(text=item,on_click=lambda _:remove_filter(a_filter,4)))
+            top_bar.controls[1].controls[4]=(ElevatedButton(text=str("x |"+item),bgcolor="grey100",color="#2b159e",on_click=lambda _:remove_filter(a_filter,4)))
             top_bar.controls[1].update()
+        top_bar.controls[1].controls[index].content.controls[1].controls.clear()
+        search_page(item)
     def remove_filter(filter,index):
         nonlocal a_filter,g_filter
         if index==3:
@@ -83,6 +81,7 @@ def main(page: ft.Page):
             g_filter="none"
         top_bar.controls[1].controls[index] =Text("")
         _search.update()
+        search_page(1)
     def results(i):
         return Container(
             height=50,
@@ -91,7 +90,7 @@ def main(page: ft.Page):
             gradient=LinearGradient(
                 begin=alignment.bottom_left,
                 end=alignment.top_right,
-                colors=["grey", "orange", "brown900"]
+                colors=["grey100"]
             ),
             border_radius=25,
             padding=padding.only(
@@ -100,13 +99,13 @@ def main(page: ft.Page):
             content=Row(
                 controls=[
                     Stack(
-                        controls=[
+                        [
                             Image(
                                 src=database[i][1],
                                 width=50,
                                 height=50,
                                 fit=ft.ImageFit.COVER,
-                                border_radius=10
+                                border_radius=25
 
                             ),
                             FilledTonalButton(
@@ -123,7 +122,7 @@ def main(page: ft.Page):
                             ft.Text(
                                 database[i][3],
                                 italic=True,
-                                color="white",
+                                color="black",
                             ),
 
                             Container(
@@ -132,7 +131,7 @@ def main(page: ft.Page):
                                 bgcolor='white12',
                                 border_radius=20,
                                 content=Container(
-                                    bgcolor="white10",
+                                    bgcolor="grey400",
                                 ),
                             ),
                         ]
@@ -149,6 +148,8 @@ def main(page: ft.Page):
 
 
     #on_click methods
+    def set_focus(focus):
+        focus.focus()
     def search_page(e):
         _search.content.controls.clear()
         _search.content.controls.append(top_bar)
@@ -187,7 +188,7 @@ def main(page: ft.Page):
     def open_author(e,index):
         nonlocal play_immed
         page.clean()
-        _author.content.controls[0].controls.append(Row(controls=[Column(controls=[FilledTonalButton(text="<",on_click=lambda e:change_page(e,-1)), Image(src=database[index][1], width=150, height=150, border_radius=10, fit=ft.ImageFit.COVER)]), Text(database[index][0], size=35, italic=True)]))
+        _author.content.controls[0].controls.append(Row(controls=[Column(controls=[ElevatedButton(text="<",bgcolor="#159e96",on_click=lambda e:change_page(e,-1)), Image(src=database[index][1], width=150, height=150, border_radius=10, fit=ft.ImageFit.COVER)]), Text(database[index][0], size=35, italic=True)]))
         for i in range(len(database)):
             if database[index][0]==database[i][0]:
                 _author.content.controls[1].controls.append(
@@ -196,11 +197,11 @@ def main(page: ft.Page):
                         gradient=LinearGradient(
                         begin=alignment.bottom_center,
                         end=alignment.top_center,
-                        colors=["green", "grey700"]
+                        colors=["grey100"]
                         ),
                         height=50,
                         border_radius=15,
-                        content=Row(controls=[play_immed[i], Text(database[i][3])])))
+                        content=Row(controls=[play_immed[i], Text(database[i][3], color="black")])))
         page.add(_author)
         page.update()
 
@@ -211,8 +212,8 @@ def main(page: ft.Page):
             pr_button.update()
     def play_song(e, index, song):
         nonlocal music, play_immed
-        if music.src != "C:/Users/User/Downloads/" + database[index][4]:
-            music.src = "C:/Users/User/Downloads/" + database[index][4]
+        if music.src != "songs/" + database[index][4]:
+            music.src = "songs/" + database[index][4]
             music.update()
             time.sleep(0.1)
             music.play()
@@ -304,10 +305,9 @@ def main(page: ft.Page):
                             gradient=LinearGradient(
                                 begin=alignment.bottom_center,
                                 end=alignment.top_center,
-                                colors=[genres_color[index], "white"]
+                                colors=["white", genres_color[index]]
                             ),
                             animate_opacity=300,
-
                             padding=padding.only(
                                 left=20,
                             ),
@@ -352,21 +352,21 @@ def main(page: ft.Page):
             genres_card.update()
 
     duration_slider=ft.Slider(min=0, max=100, value=0, divisions=100, on_change=set_time, width=350)
-    play_player=ft.FilledTonalButton("Play", on_click=play_player)
-    pr_button = ft.FilledTonalButton("❚❚", on_click=pause)
+    play_player=ft.ElevatedButton("Play", color="white", on_click=play_player, bgcolor="#159e96")
+    pr_button = ft.ElevatedButton("❚❚", color="white",on_click=pause, bgcolor="#159e96")
     progress_button = ft.CupertinoButton(text="0/0", color=ft.colors.GREY)
     volume = ft.Slider(min=0, max=100, value=100, divisions=10, on_change=volume_change, width=105, opacity=0,
                        label="🔊", animate_opacity=1000)
-    sound = ft.ElevatedButton(text="🔊", on_click=mute)
+    sound = ft.ElevatedButton(text="🔊", color="white",on_click=mute, bgcolor="#159e96")
 
     #buttons for direct play
     play_immed = []
 
     #popular
-    hits = Column(height=200, scroll='auto')
+    hits = Column(height=220, scroll='auto')
     hot_songs = []
     for i in range(len(database)):
-        play = FilledTonalButton(text="▶", on_click=lambda e, index=i, song=database[i][3]: play_song(e, index, song))
+        play = ElevatedButton(text="▶", color="#2b159e", bgcolor="white" ,on_click=lambda e, index=i, song=database[i][3]: play_song(e, index, song))
         play_immed.append(play)
         hit = results(i)
         hot_songs.append(hit)
@@ -388,7 +388,7 @@ def main(page: ft.Page):
                 gradient=LinearGradient(
                     begin=alignment.bottom_left,
                     end=alignment.top_right,
-                    colors=["grey800", "black"]
+                    colors=["#159e96"]
                 ),
                 scale=ft.transform.Scale(scale=1),
                 animate=ft.animation.Animation(1000, ft.AnimationCurve.EASE),
@@ -432,11 +432,7 @@ def main(page: ft.Page):
     for i, category in enumerate(genres):
         c = Container(
             border_radius=border_radius.only(top_left=20,bottom_right=20),
-            gradient=LinearGradient(
-                begin=alignment.bottom_left,
-                end=alignment.top_right,
-                colors=["white", genres_color[i], "brown900"]
-            ),
+            bgcolor=genres_color[i],
             width=170,
             height=110,
             padding=15,
@@ -449,7 +445,7 @@ def main(page: ft.Page):
                             Row(
                                 spacing=70,
                                 controls=[
-                                    Text('Genre'), IconButton(icon=ft.icons.SEARCH)
+                                    Text('Genre'),
                                 ]
                             ),
                             Text(category),
@@ -476,15 +472,16 @@ def main(page: ft.Page):
 
     #main screen
     f_authors=Container(
-        bgcolor="yellow",
+        bgcolor="#159e96",
         width=60,
         height=25,
         border_radius=25,
         on_click=lambda _:filter_expand(1,authors),
         content=(
             Row(
+                spacing=20,
                 controls=[
-                    Text("authors",color="black"),
+                    Text("authors",color="white"),
                     Column(
                         scroll='auto',
                         controls=[]
@@ -493,15 +490,16 @@ def main(page: ft.Page):
         )
     )
     f_genres=Container(
-        bgcolor="yellow",
+        bgcolor="#159e96",
         width=60,
         height=25,
         border_radius=25,
         on_click=lambda _:filter_expand(2,genres),
         content=(
             Row(
+                spacing=20,
                 controls=[
-                    Text("genres",color="black"),
+                    Text("genres",color="white"),
                     Column(
                         scroll='auto',
                         controls=[]
@@ -509,29 +507,46 @@ def main(page: ft.Page):
             )
         )
     )
-    srch=TextField(label="search song", width=250, height=25, border_radius=25, border_color="yellow", on_submit=search_page)
+    srch=TextField(label="search song", focused_color="#159e96", fill_color="white",width=250, height=25, border_radius=25, border_color="#2b159e", on_submit=search_page)
     main_bar=Column(controls=[
-        Row(controls=[IconButton(
-            icon=ft.icons.ACCESSIBILITY, icon_color="yellow", on_click=open_profile
-        ), srch,
+        Row(controls=[
+            Stack(
+                controls=[
+                    Image(
+                        src="https://cdn.discordapp.com/attachments/1215288136612057128/1239223741829873756/Logo2.png?ex=6642248b&is=6640d30b&hm=4ef4f180e46ea82854351a96435090b10a89ea18c6b493f3032ec0dbcf96d46f&",
+                        width=50,
+                        height=50,
+                    ),
+                    FilledTonalButton(text="",opacity=0,on_click=lambda _:change_page(1,-1))
+                ]
+            ),
+            srch,
             IconButton(
                 icon=ft.icons.SEARCH,
-                icon_color="yellow",
+                icon_color="#2b159e",
                 on_click=search_page
 
             )]),
-    ])
+    Row(controls=[Text("")])])
     top_bar=Column(controls=[
-        Row(controls=[IconButton(
-            icon=ft.icons.ACCESSIBILITY, icon_color="yellow", on_click=open_profile
-        ), srch,
+        Row(controls=[
+            Stack(
+                controls=[
+                    Image(
+                        src="https://cdn.discordapp.com/attachments/1215288136612057128/1239223741829873756/Logo2.png?ex=6642248b&is=6640d30b&hm=4ef4f180e46ea82854351a96435090b10a89ea18c6b493f3032ec0dbcf96d46f&",
+                        width=50,
+                        height=50,
+                    ),
+                    FilledTonalButton(text="",opacity=0,on_click=lambda _:change_page(1,-1))
+                ]
+            ), srch,
             IconButton(
                 icon=ft.icons.SEARCH,
-                icon_color="yellow",
+                icon_color="#2b159e",
                 on_click=search_page
 
             )]),
-        Row(controls=[FilledTonalButton(text="<", on_click=lambda e: change_page(e, -1)),f_authors,f_genres,Text(""),Text("")])
+        Row(scroll='auto', controls=[ElevatedButton(text="<", bgcolor="#2b159e",on_click=lambda e: change_page(e, -1)),f_authors,f_genres,Text(""),Text("")])
     ])
     _c = Container(
         width=400,
@@ -540,7 +555,7 @@ def main(page: ft.Page):
         gradient=LinearGradient(
             begin=alignment.bottom_left,
             end=alignment.top_right,
-            colors=[ft.colors.BLACK12, ft.colors.GREY_900, ft.colors.DEEP_ORANGE_700]
+            colors=[ft.colors.WHITE]
         ),
         border_radius=35,
         bgcolor='black',
@@ -569,13 +584,8 @@ def main(page: ft.Page):
     _player=Container(
         width=400,
         height=700,
-        gradient=LinearGradient(
-            begin=alignment.bottom_left,
-            end=alignment.top_right,
-            colors=["black", "lightblue900"]
-        ),
+        bgcolor="white",
         border_radius=35,
-        bgcolor='black',
         padding=10,
         content=Stack(
             width=350,
@@ -593,6 +603,8 @@ def main(page: ft.Page):
                                     controls=[
                                         ft.ElevatedButton(
                                             text=os.path.basename(music.src),
+                                            bgcolor="#159e96",
+                                            color="white",
                                         )
                                     ]
                                 ),
@@ -604,7 +616,7 @@ def main(page: ft.Page):
                                             width=350,
                                             height=350,
                                             fit=ft.ImageFit.COVER,
-                                            border_radius=ft.border_radius.all(100)
+                                            border_radius=175,
                                         ),
                                     ]
                                 ),
@@ -644,9 +656,11 @@ def main(page: ft.Page):
                                         Container(
                                             content=Row(
                                                 controls=[
-                                                    FilledTonalButton(
+                                                    ElevatedButton(
                                                         text="back",
-                                                        on_click=lambda e: change_page(e, -1)
+                                                        on_click=lambda e: change_page(e, -1),
+                                                        bgcolor="#2b159e",
+                                                        color="white",
                                                     ),
                                                     sound,
                                                     volume,
@@ -658,7 +672,6 @@ def main(page: ft.Page):
                                         ),
 
                                         ft.CupertinoButton(text=" "),
-                                        #forw_rewind,
                                     ]
                                 )
 
@@ -675,9 +688,9 @@ def main(page: ft.Page):
         width=400,
         height=700,
         gradient=LinearGradient(
-            begin=alignment.bottom_left,
-            end=alignment.top_right,
-            colors=["black", "grey700"]
+            begin=alignment.bottom_center,
+            end=alignment.top_center,
+            colors=["white","white","#2b159e"]
         ),
         border_radius=35,
         content=Column(
@@ -693,14 +706,8 @@ def main(page: ft.Page):
     _search= Container(
         width=400,
         height=750,
-
-        gradient=LinearGradient(
-            begin=alignment.bottom_left,
-            end=alignment.top_right,
-            colors=[ft.colors.BLACK12, ft.colors.GREY_900, ft.colors.DEEP_ORANGE_700]
-        ),
+        bgcolor="white",
         border_radius=35,
-        bgcolor='black',
         padding=10,
         content=Column(
             scroll='auto',
