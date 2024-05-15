@@ -111,8 +111,8 @@ def main(page: ft.Page):
 
                 border_radius=105,
                 width=210,
-                left=300,  # Позиционируем по горизонтали
-                top=600,  # Позиционируем по вертикали
+                left=300, 
+                top=600, 
                 height=210,
             ),
             Container(
