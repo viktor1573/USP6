@@ -570,7 +570,7 @@ def main(page: ft.Page):
         ))
     _player=Container(
         width=400,
-        height=700,
+        height=750,
         bgcolor="white",
         border_radius=35,
         padding=10,
@@ -673,7 +673,7 @@ def main(page: ft.Page):
     )
     _author=Container(
         width=400,
-        height=700,
+        height=750,
         gradient=LinearGradient(
             begin=alignment.bottom_center,
             end=alignment.top_center,
