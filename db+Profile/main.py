@@ -105,11 +105,8 @@ def main(page: ft.Page):
         password = user_password_register.value
         email = user_email_register.value
 
-        # Проверка наличия всех значений
         if all([username, password, email]):
-            # Проверка минимальной длины пароля
             if len(password) >= 6:
-                # Проверка соответствия email паттерну
                 if re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]", email):
                     user_btn_register.disabled = False
                 else:
